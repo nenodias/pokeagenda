@@ -1,0 +1,25 @@
+spring:
+  application.name: pokeagenda
+  main:
+    banner-mode: 'off'
+    allow-bean-definition-overriding: true
+  datasource:
+    url: 'jdbc:h2:mem:mydb'
+    username: 'sa'
+    password: 'password'
+    type: 'com.zaxxer.hikari.HikariDataSource'
+    driver-class-name: 'org.h2.Driver'
+    hikari:
+      pool-name: 'pokeagenda'
+      connection-timeout: 6000
+      minimum-idle: 1
+      maximum-pool-size: 35
+      connection-init-sql: SELECT 1
+  jpa:
+    open-in-view: false
+    show-sql: true
+    database-platform: 'org.hibernate.dialect.H2Dialect'
+    hibernate:
+      show-sql: true
+    properties:
+      hibernate.format_sql: true
