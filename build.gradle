@@ -1,3 +1,5 @@
+import static org.gradle.api.JavaVersion.VERSION_17
+
 plugins {
 	id 'java'
 	id 'org.springframework.boot' version '2.7.5'
@@ -19,24 +21,54 @@ repositories {
 }
 
 ext {
-	set('springCloudVersion', "2021.0.5")
-	set('springDocVersion',"1.6.12")
+	springCloudVersion = "2021.0.5"
+	springDocVersion = "1.6.12"
+	mapStructVersion = "1.5.3.Final"
+}
+
+tasks.withType(JavaCompile) {
+	sourceCompatibility = VERSION_17
+	targetCompatibility = VERSION_17
+
+	options.encoding = 'UTF-8'
+	options.compilerArgs << '-parameters'
+}
+
+compileJava {
+	options.compilerArgs = [
+			'-parameters',
+			'-Amapstruct.defaultComponentModel=spring'
+	]
 }
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'org.springframework.cloud:spring-cloud-starter-bootstrap'
+	implementation 'org.springframework.cloud:spring-cloud-starter-config'
 	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 	implementation "org.springdoc:springdoc-openapi-ui:${springDocVersion}"
 	implementation "org.springdoc:springdoc-openapi-webflux-ui:${springDocVersion}"
-	compileOnly 'org.projectlombok:lombok'
+	implementation "org.mapstruct:mapstruct:$mapStructVersion"
+	implementation "org.mapstruct:mapstruct-jdk8:$mapStructVersion"
+
+	compileOnly "org.projectlombok:lombok"
+
+	annotationProcessor "org.projectlombok:lombok"
+	annotationProcessor "org.mapstruct:mapstruct-processor:$mapStructVersion"
+	annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
+
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'com.mysql:mysql-connector-j'
-	annotationProcessor 'org.projectlombok:lombok'
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'io.projectreactor:reactor-test'
 	testImplementation 'org.springframework.cloud:spring-cloud-starter-contract-stub-runner'
 	testImplementation 'com.h2database:h2'
+
+	testAnnotationProcessor "org.projectlombok:lombok"
+	testCompileOnly "org.projectlombok:lombok"
 }
 
 dependencyManagement {
